@@ -1,0 +1,414 @@
+<!-- TOC -->
+* [UserCrates](#usercrates)
+  * [About](#about)
+  * [Special Notes](#special-notes)
+    * [For Server Owners](#for-server-owners)
+    * [For Developers](#for-developers)
+  * [Commands](#commands)
+  * [Permissions](#permissions)
+  * [Configs](#configs)
+    * [lang.yml](#langyml)
+    * [config.yml](#configyml)
+  * [Support](#support)
+<!-- TOC -->
+# UserCrates
+This plugin makes every chest a potential crate by someone. Every player can make a crate and put items they want to it, then open their own crates!
+
+## About
+
+How it works? Simply you just look to a crate, write a couple commands, and done! Now anyone with a key can open that crate. Nothing else required!
+
+## Special Notes
+
+### For Server Owners
+
+If you want to enable economy features (such as paying money to a crate), you need to install Vault and an economy plugin that works with Vault to your server. It is not
+required though, plugin will automatically disable the economy-specific features when Vault is not correctly setup.
+
+Any chest protected by at least one of the plugins below will be unable to become a crate. If you want another plugin to be here, tell me on my [discord](https://discord.gg/8PPgcmYNf4).
+* WorldGuard
+* GriefPrevention
+
+All the permissions should be enabled to all users by default. If you wish to make some limitations, you need a permission manager plugin that allows you to disable a
+permission.
+
+### For Developers
+
+If you want your protection plugins to work with crates. Send me a message to me on [discord](https://discord.gg/8PPgcmYNf4) including all the information below:
+* Name and main page of your plugin (spigotmc,modrinth and bukkit pages are the ones I trust the most).
+* Installation of an API to your plugin (or your entire plugin source as dependency, your choice).
+* A `public static boolean method(Player p,Location loc)` that returns `true` if your plugin will allow `p` to make a crate at the block in `loc`. IN JAVA, I HATE KOTLIN.
+
+Unfortunately, there is no API for this plugin. Despite it would be useless at the moment, I can make one if enough requests for it approaches.
+
+## Commands
+
+| Commnad                            | Descripton                                                                              | Permission Required        |
+|------------------------------------|-----------------------------------------------------------------------------------------|----------------------------|
+| /crate                             | Main command.                                                                           | usercrates.use             |
+| /crate help                        | Provides a main help menu for all the other commands                                    |                            |
+| /crate create \[amount\] \[label\] | Creates a crate at the chest you are looking at.                                        | usercrates.create          |
+| /crate delete                      | Deletes the crate you are looking at. Of course you need to be owner of that crate.     | usercrates.delete          |
+| /crate manage                      | Provides a simple menu for command suggestions about modifying your crate.              | usercrates.manage          |
+| /crate addaccessor \<player\>      | Adds the given player as an accessor for your crate.                                    | usercrates.accessor.add    |
+| /crate removeaccessor \<player\>   | Removes the player given from the accessors of your crate.                              | usercrates.accessor.remove |
+| /crate changetype \<type\>         | Changes the type of your crate.                                                         | usercrates.changetype      |
+| /crate setprice \<price\>          | Changes the price of your crate                                                         | usercrates.setprice        |
+| /crate getkey \<amount\>           | Gives you an amount of the keys to sell with various ways.                              | usercrates.getkey          |
+| /crate setlabel \<label\>          | Changes the label of your crate, which is a text appearing above your crate's hologram. | usercrates.setlabel        |
+
+## Permissions
+
+> Command permissions are skipped due to you can find them on [Commands](#commands)
+
+| Permission       | Description                                       |
+|------------------|---------------------------------------------------|
+| usercrates.*     | Everything under usercrates.                      |
+| usercrates.admin | Bypasses owner/accessor checks on crate commands. |
+
+## Configs
+
+### lang.yml
+
+````yaml
+# Messages of the commands /crate addaccessor and /crate removeaccessor
+accessor:
+
+  # /crate addaccessor
+  add:
+
+    # When there is no chest at where player is looking.
+    not-chest: '&cYou need to look at the crate that you want to add an accessor.'
+
+    # When player is looking to a chest, but it isn't a crate.
+    not-crate: '&cYou are not looking at a crate.'
+
+    # When player tries to do this action for a crate that he does not own.
+    not-owner: '&cThat crate is not yours.'
+
+    # When the given name already exists inside accessor list of that crate.
+    exists: '&b%player% &cis already an accessor of this crate.'
+
+    # When player successfully adds someone to accessor list
+    # %player% - Player whose added as an accessor.
+    success: '&aSuccessfully added &b%player% &aas an accessor to this crate!'
+
+  # /crate removeaccessor
+  remove:
+
+    # When there is no chest at where player is looking.
+    not-chest: '&cYou need to look at the crate that you want to remove an accessor.'
+
+    # When player is looking to a chest, but it isn't a crate.
+    not-crate: '&cYou are not looking at a crate.'
+
+    # When player tries to do this action for a crate that he does not own.
+    not-owner: '&cThat crate is not yours.'
+
+    # When the given name does not exist inside accessor list of that crate.
+    unexists: '&b%player% &cis not an accessor of this crate already.'
+
+    # When player successfully removes someone from accessor list
+    # %player% - Player whose removed from accessors
+    success: '&aSuccessfully removed &b%player% &afrom accessors of this crate!'
+
+# /crate changetype
+changetype:
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to change type.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # When player wants a pricable type but there is no economy.
+  no-econ: '&cYou can''t make your crate for sale, because this server does not have an economy.'
+
+  # When player successfully changes the crate type.
+  # %type% - New type of the crate. Defined under 'manage.types'
+  success: '&aSuccessfully changed crate type to &b%type%!'
+
+# /crate create
+create:
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need look at a chest to make it a crate.'
+
+  # When player is looking to a crate
+  already-crate: '&cThere is already a crate there.'
+
+  # When player successfully creates a crate.
+  success: '&aSuccessfully created a crate at that block! You can put your items to your crate, set a price and get keys for it, and add accessors to manage the crate.'
+
+  # Additional warning to success message. Only appears when there is no economy on the server.
+  no-econ: '&6You won''t be able to make your crate for sale, because this server does not have an economy.'
+
+# /crate delete
+delete:
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to delete.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # When player successfully removes the crate.
+  success: '&aSuccessfully removed the crate!'
+
+# /crate getkey
+getkey:
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to get a key for.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # When player tries to get a key for a crate that does not support keys.
+  not-keyable: '&cThis crate doesn''t support keys. You have to buy the crate by opening it. If you wanted to make it able for keys, change its type using &b/crate changetype &cfirst.'
+
+  # When player successfully gets some keys.
+  # %amount% - Number amount of the keys player got.
+  success: '&aSuccessfully got &b%amount% &akeys!'
+
+# /crate manage
+manage:
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to manage.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # Header of the menu.
+  # %player% - Player whose owner of this crate.
+  header: '&4--&a%player%''s Crate&4--'
+
+  # Owner text that shows the crate owner.
+  # %player% - Player whose owner of this crate.
+  owner: '&eOwner: &b%player%'
+
+  # Accessors text that shows the accessors.
+  # %accessors% - A list of the players that is an accessor of this crate.
+  accessors: '&eAccessors: &b%accessors%'
+
+  # [ADD] Button that suggests you /crate addaccessor when clicked.
+  add-accessor: '&a&l[ADD]'
+
+  # Type text that shows type of the crate.
+  # %type% - Type of the crate. Defined under 'manage.types'
+  type: '&eUsing Type: &b%type%'
+
+  # Price text that shows price of the crate.
+  # %price% - Price of the crate.
+  price: '&ePrice: &a%price%'
+
+  # [CHANGE] Button that suggests you /crate setprice to change the price when clicked.
+  change: '&a&l[CHANGE]'
+
+  # Colorless type names for all the crate types.
+  types:
+
+    # Means that the only way to open the crate is using a key of it.
+    KEY: 'Only using Key'
+
+    # Means that the only way to open the crate is paying the price of it.
+    PRICE: 'Only with price'
+
+    # Means that player can open the crate in both key and price ways.
+    BOTH_PRICE_KEY: 'Prices & Keys'
+
+    # Means that no one but the accessors can open the crate without a price/key. Intended for fun purposed crates.
+    ONLY_ACCESSORS: 'Accessor Only'
+
+  # Footer of the menu.
+  footer: '&4------------------------'
+
+# /crate setprice
+setprice:
+
+  # When there is no economy on the server, meaning this command is completely useless.
+  no-econ: '&cYou can''t set a price for any crate, because this server does not have an economy.'
+
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to change the price.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # When the crate player is looking at does not support prices.
+  not-pricable: '&cThis crate can''t have a price. You need to get a key using &b/crate getkey&c. If you wanted to make it for sale, change its type to a buyable type using &b/crate changetype &cfirst.'
+
+  # When player successfully changed the crate price.
+  # %price% - New price of the crate.
+  success: '&aSuccessfully changed crate''s price to &b%price%!'
+  
+# /crate setprice
+setlabel:
+  # When there is no chest at where player is looking.
+  not-chest: '&cYou need to look at the crate that you want to change the label.'
+
+  # When player is looking to a chest, but it isn't a crate.
+  not-crate: '&cYou are not looking at a crate.'
+
+  # When player tries to do this action for a crate that he does not own.
+  not-owner: '&cThat crate is not yours.'
+
+  # When player successfully changed the crate price.
+  # %label% - New label of the crate.
+  success: '&aSuccessfully changed crate''s label to &b%label%!'
+
+# /crate help (Also appears when you try to execute an unknown command, such as /crate askdg or /crate setype.)
+help:
+
+  # Header of the list.
+  header: '&4-----&aHelp Menu&4-----'
+
+  # Command format of the list.
+  # %cmd% - Usage of the command.
+  # %desc% - Description of the command.
+  format: '&b%cmd% &6- &e%desc%'
+
+  # Footer of the list.
+  footer: '&4-------------------'
+
+# When someone manages to break a crate block without displaying it.
+crate-break: '&cYou can''t break a crate block. If you tried to remove it, consider &b/crate delete&c.'
+
+# Messages about the moment that someone opens a crate.
+open:
+
+  # When there is no space at player's inventory.
+  no-space: '&cYou have no space in your inventory to open this crate.'
+
+  # When the crate is in 'Accessor Only' mode, but player is not an accessor.
+  not-accessor: '&cThis crate is accessor only, you can''t open it.'
+
+  # When player is opening the crate.
+  ing: '&eOpening the crate...'
+
+  # When the crate is a type that supports prices but there is no economy in the server.
+  no-econ: '&cYou can''t open this crate right now, because this server probably removed their economy system while this crate was still in &bOnly Price &ctype. Ask the crate''s owner to change the type.'
+
+  # Stands for 'not-enough-balance'. When player couldn't afford the crate.
+  # %price% - Amount of the money player needs. Guaranteed that player's balance is lower than it.
+  neb: '&cYou need &a%price% &cto open this crate.'
+
+  # When player isn't holding a key on his hand but the crate requires one.
+  no-key: '&cYou need to hold a key in your hand for this crate.'
+
+  # When player is holding a key that belongs to another crate.
+  invalid-key: '&cYou are not holding the correct key for this crate.'
+
+  # When there is nothing inside the crate.
+  nothing: '&cThere is nothing inside this crate.'
+
+  # Says how much money did player spent on this crate, if he did.
+  # %price% - Amount of the money player spent on the crate.
+  spent: '&eSpent &a%price% &eon this crate.'
+
+  # Goes to the crate owner when player opens it via price.
+  # %player% - Player who opened a crate made by whose seeing this message.
+  # %price% - Amount of the money %player% spent. Player whose seeing this message earned this amount of money.
+  notification: '&b%player% &ebought your crate for &a%price%&e!'
+
+  # Says what player got from the crate.
+  # IMPORTANT: Always put an '&f' before and after '%item%'. DO NOT FORGET THIS.
+  # %item% - Name of the item player got. Shows the entire item tooltip when hovered.
+  # %count% - Amount of the item.
+  done: '&aYou got &f[&f%item%&f] x%count% &afrom the crate!'
+
+# Lines of the crate hologram.
+hologram:
+
+  # First line.
+  # %player% - Player who owns the crate.
+  1: '&e%player%''s Crate'
+
+  # Second line.
+  # %price% - Price of the crate.
+  2: '&ePrice: &a%price%'
+
+  # Appears at second line when the crate is in 'KEY' mode.
+  2k: '&6Key Required'
+
+  # Appears at second line when the crate is in 'BOTH_KEY_PRICE' mode.
+  # %price% - Price of the crate
+  2kp: '&6Use Key &d/ &ePrice: &a%price%'
+
+  # Appears at seconds line when the crate is in 'ACCESSOR_ONLY' mode.
+  2a: '&6Accessor Only'
+
+  # Third line.
+  3: '&7Right-Click to Open'
+
+  # Fourth line.
+  4: '&7Left-Click to See Items'
+
+# Crate display menu.
+crate_display:
+
+  # Title of the menu.
+  title: 'Crate Display'
+
+  # Change text that appears under every item inside crate display menu.
+  # %change% - Percentage chance of that item to get while opening the crate.
+  # %count% - Number that shows how many slots are filled with an item exactly like this one.
+  # %all% - Amount of the filled slots inside the crate.
+  chance: '&eChance&6: &3%&b%chance% &3(&b%count% in %all%&3)'
+
+# Crate open menu.
+crate_opening:
+
+  # Title of the menu
+  # %player% - Player whose owner of the crate that is being opened right now.
+  title: 'Opening %player%''s Crate!'
+
+# Display of the crate keys.
+key:
+
+  # Name of the item.
+  title: '&eCrate Key'
+
+  # 3 Lined description of the item.
+  desc:
+
+    # First line. Says that this crate opens %player%'s crate.
+    # %player% - Player who owns the crate that this key belongs to.
+    1: '&6Opens &e%player%''s Crate&6.'
+
+    # Second line. Says how much this keys worth.
+    # %price% - Price of the crate, price of one key as well.
+    2: '&6Worth &a%price% &6per key from the latest price.'
+
+    # Third line. Says how to open the crate using this key.
+    # %player% - Player who owns the crate that this key belongs to.
+    3: '&6Right-Click to &e%player%''s Crate &6with this key to open it!'
+````
+
+### config.yml
+
+```yaml
+open:
+  # If enabled, a crate owner will get notified when some of his crates got opened.
+  notification: true
+```
+
+## Support
+
+If you see any bugs at the plugin, have some ideas for it, or just want to talk with me, consider my [discord](https://discord.gg/8PPgcmYNf4) server! It is (probably the best and) the fastest way to reach me out.

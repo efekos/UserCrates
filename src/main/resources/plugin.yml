@@ -1,0 +1,60 @@
+name: UserCrates
+version: '${project.version}'
+main: dev.efekos.usercrates.Main
+api-version: '1.20'
+depend:
+  - Vault
+  - WorldGuard
+  - GriefPrevention
+description: Add user-made crates to your server!
+permissions:
+  usercrates.*:
+    description: Allows to use every command under /crate
+    default: op
+    children:
+      - usercrates.use
+      - usercrates.accessor.add
+      - usercrates.accessor.remove
+      - usercrates.changetype
+      - usercrates.create
+      - usercrates.delete
+      - usercrates.getkey
+      - usercrates.help
+      - usercrates.manage
+      - usercrates.setprice
+      - usercrates.admin
+  usercrates.admin:
+    description: Allows to bypass any crate owner/accessor check.
+    default: op
+  usercrates.use:
+    description: Required for any command under /crate
+    default: true
+  usercrates.changetype:
+    default: true
+    description: Allows to use /crate changetype
+  usercrates.accessor.add:
+    default: true
+    description: Allows to use /crate addaccessor
+  usercrates.accessor.remove:
+    default: true
+    description: Allows to use /crate removeaccessor
+  usercrates.create:
+    description: Allows to use /crate create
+    default: true
+  usercrates.delete:
+    default: true
+    description: Allows to use /crate delete
+  usercrates.getkey:
+    default: true
+    description: Allows to use /crate getkey
+  usercrates.help:
+    default: true
+    description: Allows to use /crate help
+  usercrates.manage:
+    default: true
+    description: Allows to use /crate manage
+  usercrates.setprice:
+    default: true
+    description: Allows to use /crate setprice
+author: efekos
+prefix: '[UserCrates]'

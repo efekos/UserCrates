@@ -1,0 +1,3 @@
+open:
+  # If enabled, a crate owner will get notified when some of his crates got opened.
+  notification: true
