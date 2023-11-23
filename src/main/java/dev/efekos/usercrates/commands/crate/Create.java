@@ -8,7 +8,7 @@ import me.efekos.simpler.annotations.Command;
 import me.efekos.simpler.commands.CoreCommand;
 import me.efekos.simpler.commands.SubCommand;
 import me.efekos.simpler.commands.syntax.ArgumentPriority;
-import me.efekos.simpler.commands.syntax.impl.NumberArgument;
+import me.efekos.simpler.commands.syntax.impl.IntegerArgument;
 import me.efekos.simpler.commands.syntax.Syntax;
 import me.efekos.simpler.commands.syntax.impl.StringArgument;
 import me.efekos.simpler.translation.TranslateManager;
@@ -42,7 +42,7 @@ public class Create extends SubCommand {
     @Override
     public @NotNull Syntax getSyntax() {
         return new Syntax()
-                .withArgument(new NumberArgument("amount", ArgumentPriority.OPTIONAL,0,2147483647))
+                .withArgument(new IntegerArgument("amount", ArgumentPriority.OPTIONAL,0,2147483647))
                 .withArgument(new StringArgument("label",ArgumentPriority.OPTIONAL,0,128));
     }
 

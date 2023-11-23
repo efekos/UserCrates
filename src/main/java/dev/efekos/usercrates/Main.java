@@ -5,8 +5,8 @@ import dev.efekos.usercrates.events.BlockEvents;
 import dev.efekos.usercrates.events.EntityEvents;
 import dev.efekos.usercrates.events.InventoryEvents;
 import me.efekos.simpler.commands.CommandManager;
-import me.efekos.simpler.config.Config;
-import me.efekos.simpler.config.JSONDataManager;
+import me.efekos.simpler.config.ListDataManager;
+import me.efekos.simpler.config.YamlConfig;
 import me.efekos.simpler.menu.MenuManager;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.NamespacedKey;
@@ -15,9 +15,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
 
-    public static Config CONFIG;
-    public static Config LANG_CONFIG;
-    public static JSONDataManager<Crate> CRATES;
+    public static YamlConfig CONFIG;
+    public static YamlConfig LANG_CONFIG;
+    public static ListDataManager<Crate> CRATES;
 
     public static NamespacedKey CRATE_UUID;
 
@@ -32,9 +32,9 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         // random setup stuff
-        CONFIG = new Config("config.yml",this);
-        LANG_CONFIG = new Config("lang.yml",this);
-        CRATES = new JSONDataManager<>("Crates.json", this);
+        CONFIG = new YamlConfig("config.yml",this);
+        LANG_CONFIG = new YamlConfig("lang.yml",this);
+        CRATES = new ListDataManager<>("Crates.json", this);
         CRATES.load(Crate[].class);
         CONFIG.setup();
         LANG_CONFIG.setup();

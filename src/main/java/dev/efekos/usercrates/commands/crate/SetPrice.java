@@ -8,7 +8,7 @@ import me.efekos.simpler.annotations.Command;
 import me.efekos.simpler.commands.CoreCommand;
 import me.efekos.simpler.commands.SubCommand;
 import me.efekos.simpler.commands.syntax.ArgumentPriority;
-import me.efekos.simpler.commands.syntax.impl.NumberArgument;
+import me.efekos.simpler.commands.syntax.impl.IntegerArgument;
 import me.efekos.simpler.commands.syntax.Syntax;
 import me.efekos.simpler.translation.TranslateManager;
 import org.bukkit.Material;
@@ -42,7 +42,7 @@ public class SetPrice extends SubCommand {
     @Override
     public @NotNull Syntax getSyntax() {
         return new Syntax()
-                .withArgument(new NumberArgument("price", ArgumentPriority.REQUIRED,1,2147483647));
+                .withArgument(new IntegerArgument("price", ArgumentPriority.REQUIRED,1,2147483647));
     }
 
     @Override
