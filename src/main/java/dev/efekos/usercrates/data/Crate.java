@@ -116,7 +116,7 @@ public class Crate implements Storable {
         this.consumeType = consumeType;
     }
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
 
     @Override
     public UUID getUniqueId() {
