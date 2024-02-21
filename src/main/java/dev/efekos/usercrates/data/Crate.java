@@ -104,7 +104,7 @@ public class Crate implements Storable {
         this.holograms = holograms;
     }
 
-    public void addHologram(UUID hologram){
+    public void addHologram(UUID hologram) {
         this.holograms.add(hologram);
     }
 
@@ -128,7 +128,7 @@ public class Crate implements Storable {
         this.accessors = accessors;
     }
 
-    public void addAccessor(UUID accessor){
+    public void addAccessor(UUID accessor) {
         this.accessors.add(accessor);
     }
 

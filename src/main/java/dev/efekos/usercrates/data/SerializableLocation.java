@@ -101,12 +101,12 @@ public class SerializableLocation implements Serializable {
         return (int) Math.floor(z);
     }
 
-    public Location toLocation(){
-        return new Location(getWorld(),getX(),getY(),getZ(),getYaw(),getPitch());
+    public Location toLocation() {
+        return new Location(getWorld(), getX(), getY(), getZ(), getYaw(), getPitch());
     }
 
-    public static SerializableLocation from(Location location){
-        return new SerializableLocation(location.getWorld().getName(),location.getX(),location.getY(),location.getZ(),location.getYaw(),location.getPitch());
+    public static SerializableLocation from(Location location) {
+        return new SerializableLocation(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
     public SerializableLocation(String world, double x, double y, double z, float yaw, float pitch) {

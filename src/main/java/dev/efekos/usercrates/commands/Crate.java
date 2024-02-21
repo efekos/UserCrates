@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-@Command(name = "crate",description = "Manage your crates!",permission = "usercrates.use",playerOnly = true)
+@Command(name = "crate", description = "Manage your crates!", permission = "usercrates.use", playerOnly = true)
 public class Crate extends CoreCommand {
     public Crate(@NotNull String name) {
         super(name);
@@ -53,15 +53,15 @@ public class Crate extends CoreCommand {
 
     @Override
     public void renderHelpList(CommandSender commandSender, List<SubCommand> subCommands) {
-        commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.header","&4-----&aHelp Menu&4-----")));
+        commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.header", "&4-----&aHelp Menu&4-----")));
 
         for (SubCommand command : subCommands) {
-            commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.format","&b%cmd% &6- &e%desc%")
-                    .replace("%cmd%",command.getUsage())
-                    .replace("%desc%",command.getDescription())
+            commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.format", "&b%cmd% &6- &e%desc%")
+                    .replace("%cmd%", command.getUsage())
+                    .replace("%desc%", command.getDescription())
             ));
         }
 
-        commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.footer","&4-------------------")));
+        commandSender.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("help.footer", "&4-------------------")));
     }
 }

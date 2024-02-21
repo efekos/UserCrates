@@ -61,7 +61,7 @@ public class CrateTypeArgument extends Argument {
 
     @Override
     public ArgumentHandleResult handleCorrection(String s) {
-        if(options.contains(s)) return ArgumentHandleResult.success();
+        if (options.contains(s)) return ArgumentHandleResult.success();
         else return ArgumentHandleResult.fail(s + " is not a crate type.");
     }
 }

@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Command(name = "setlabel",description = "Change the label of your crate",permission = "usercrates.setlabel",playerOnly = true)
+@Command(name = "setlabel", description = "Change the label of your crate", permission = "usercrates.setlabel", playerOnly = true)
 public class SetLabel extends SubCommand {
     public SetLabel(@NotNull String name) {
         super(name);
@@ -64,21 +64,21 @@ public class SetLabel extends SubCommand {
     @Override
     public @NotNull Syntax getSyntax() {
         return new Syntax()
-                .withArgument(new StringArgument("label", ArgumentPriority.REQUIRED,1,128));
+                .withArgument(new StringArgument("label", ArgumentPriority.REQUIRED, 1, 128));
     }
 
     @Override
     public void onPlayerUse(Player player, String[] args) {
-        Block targetBlock = Utilities.getTargetBlock(player,5);
+        Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if(targetBlock.getType()!= Material.CHEST){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-chest","&cYou need to look at the crate that you want to change the label.")));
+        if (targetBlock.getType() != Material.CHEST) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-chest", "&cYou need to look at the crate that you want to change the label.")));
             return;
         }
 
         Chest chest = (Chest) targetBlock.getState();
-        if(!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-crate","&cYou are not looking at a crate.")));
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-crate", "&cYou are not looking at a crate.")));
             return;
         }
 
@@ -86,20 +86,20 @@ public class SetLabel extends SubCommand {
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if(!crate.getOwner().equals(player.getUniqueId())&&!player.hasPermission("usercrates.admin")){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-owner","&cThat crate is not yours.")));
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-owner", "&cThat crate is not yours.")));
             return;
         }
 
         // rest is cmd specific
 
-        crate.setLabel(String.join(" ",args));
+        crate.setLabel(String.join(" ", args));
 
         Utilities.refreshHolograms(crate, chest.getWorld());
 
-        Main.CRATES.update(crate.getUniqueId(),crate);
+        Main.CRATES.update(crate.getUniqueId(), crate);
 
-        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.success","&aSuccessfully changed crate's label to &b%label%!").replace("%label%",String.join(" ",args))));
+        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.success", "&aSuccessfully changed crate's label to &b%label%!").replace("%label%", String.join(" ", args))));
     }
 
     @Override

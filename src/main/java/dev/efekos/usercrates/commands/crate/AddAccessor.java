@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Command(name = "addaccessor",description = "Add and accessor to your crate",permission = "usercrates.accessor.add",playerOnly = true)
+@Command(name = "addaccessor", description = "Add and accessor to your crate", permission = "usercrates.accessor.add", playerOnly = true)
 public class AddAccessor extends SubCommand {
     public AddAccessor(@NotNull String name) {
         super(name);
@@ -70,16 +70,16 @@ public class AddAccessor extends SubCommand {
 
     @Override
     public void onPlayerUse(Player player, String[] args) {
-        Block targetBlock = Utilities.getTargetBlock(player,5);
+        Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if(targetBlock.getType()!= Material.CHEST){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-chest","&cYou need to look at the crate that you want to add an accessor.")));
+        if (targetBlock.getType() != Material.CHEST) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-chest", "&cYou need to look at the crate that you want to add an accessor.")));
             return;
         }
 
         Chest chest = (Chest) targetBlock.getState();
-        if(!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-crate","&cYou are not looking at a crate.")));
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-crate", "&cYou are not looking at a crate.")));
             return;
         }
 
@@ -87,8 +87,8 @@ public class AddAccessor extends SubCommand {
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if(!crate.getOwner().equals(player.getUniqueId())&&!player.hasPermission("usercrates.admin")){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-owner","&cThat crate is not yours.")));
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-owner", "&cThat crate is not yours.")));
             return;
         }
 
@@ -96,16 +96,16 @@ public class AddAccessor extends SubCommand {
         assert newAccessor != null;
         UUID accessorId = newAccessor.getUniqueId();
 
-        if(crate.getAccessors().contains(accessorId)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.exists","&b%player% &cis already an accessor of this crate.").replace("%player%",newAccessor.getName())));
+        if (crate.getAccessors().contains(accessorId)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.exists", "&b%player% &cis already an accessor of this crate.").replace("%player%", newAccessor.getName())));
             return;
         }
 
         crate.addAccessor(accessorId);
 
-        Main.CRATES.update(crate.getUniqueId(),crate);
+        Main.CRATES.update(crate.getUniqueId(), crate);
 
-        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.success","&aSuccessfully added &b%player% &aas an accessor to this crate!").replace("%player%",newAccessor.getName())));
+        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.success", "&aSuccessfully added &b%player% &aas an accessor to this crate!").replace("%player%", newAccessor.getName())));
     }
 
     @Override

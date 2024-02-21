@@ -44,7 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-@Command(name = "delete",description = "Delete one of your crates",playerOnly = true,permission = "usercrates.delete")
+@Command(name = "delete", description = "Delete one of your crates", playerOnly = true, permission = "usercrates.delete")
 public class Delete extends SubCommand {
     public Delete(@NotNull String name) {
         super(name);
@@ -66,23 +66,23 @@ public class Delete extends SubCommand {
 
     @Override
     public void onPlayerUse(Player player, String[] strings) {
-        Block targetBlock = Utilities.getTargetBlock(player,5);
+        Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if(targetBlock.getType()!= Material.CHEST){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-chest","&cYou need to look at the crate that you want to delete.")));
+        if (targetBlock.getType() != Material.CHEST) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-chest", "&cYou need to look at the crate that you want to delete.")));
             return;
         }
 
         Chest chest = (Chest) targetBlock.getState();
-        if(!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-crate","&cYou are not looking at a crate.")));
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-crate", "&cYou are not looking at a crate.")));
             return;
         }
 
-        UUID id = UUID.fromString(chest.getPersistentDataContainer().get(Main.CRATE_UUID,PersistentDataType.STRING));
+        UUID id = UUID.fromString(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING));
         Crate crate = Main.CRATES.get(id);
-        if(!crate.getOwner().equals(player.getUniqueId())&&!player.hasPermission("usercrates.admin")){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-owner","&cThat crate is not yours.")));
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-owner", "&cThat crate is not yours.")));
             return;
         }
 
@@ -94,7 +94,7 @@ public class Delete extends SubCommand {
 
 
         chest.update();
-        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.success","&aSuccessfully removed the crate!")));
+        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.success", "&aSuccessfully removed the crate!")));
     }
 
     @Override

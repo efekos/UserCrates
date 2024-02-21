@@ -31,8 +31,8 @@ import me.efekos.simpler.annotations.Command;
 import me.efekos.simpler.commands.CoreCommand;
 import me.efekos.simpler.commands.SubCommand;
 import me.efekos.simpler.commands.syntax.ArgumentPriority;
-import me.efekos.simpler.commands.syntax.impl.PlayerArgument;
 import me.efekos.simpler.commands.syntax.Syntax;
+import me.efekos.simpler.commands.syntax.impl.PlayerArgument;
 import me.efekos.simpler.translation.TranslateManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Command(name = "removeaccessor",description = "Remove an accessor from your crate",permission = "usercrates.accessor.remove",playerOnly = true)
+@Command(name = "removeaccessor", description = "Remove an accessor from your crate", permission = "usercrates.accessor.remove", playerOnly = true)
 public class RemoveAccessor extends SubCommand {
     public RemoveAccessor(@NotNull String name) {
         super(name);
@@ -71,16 +71,16 @@ public class RemoveAccessor extends SubCommand {
 
     @Override
     public void onPlayerUse(Player player, String[] args) {
-        Block targetBlock = Utilities.getTargetBlock(player,5);
+        Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if(targetBlock.getType()!= Material.CHEST){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-chest","&cYou need to look at the crate that you want to remove an accessor.")));
+        if (targetBlock.getType() != Material.CHEST) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-chest", "&cYou need to look at the crate that you want to remove an accessor.")));
             return;
         }
 
         Chest chest = (Chest) targetBlock.getState();
-        if(!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-crate","&cYou are not looking at a crate.")));
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-crate", "&cYou are not looking at a crate.")));
             return;
         }
 
@@ -88,26 +88,28 @@ public class RemoveAccessor extends SubCommand {
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if(!crate.getOwner().equals(player.getUniqueId())&&!player.hasPermission("usercrates.admin")){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-owner","&cThat crate is not yours.")));
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.not-owner", "&cThat crate is not yours.")));
             return;
         }
 
         Player newAccessor = Bukkit.getPlayer(args[0]);
         UUID accessorId = newAccessor.getUniqueId();
 
-        if(!crate.getAccessors().contains(accessorId)){
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.unexists","&b%player% &cis not an accessor of this crate already.").replace("%player%",newAccessor.getName())));
+        if (!crate.getAccessors().contains(accessorId)) {
+            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.unexists", "&b%player% &cis not an accessor of this crate already.").replace("%player%", newAccessor.getName())));
             return;
         }
 
         List<UUID> newList = new ArrayList<>();
-        crate.getAccessors().forEach(uuid -> {if(!uuid.equals(accessorId)) newList.add(uuid);});
+        crate.getAccessors().forEach(uuid -> {
+            if (!uuid.equals(accessorId)) newList.add(uuid);
+        });
         crate.setAccessors(newList);
 
-        Main.CRATES.update(crate.getUniqueId(),crate);
+        Main.CRATES.update(crate.getUniqueId(), crate);
 
-        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.success","&aSuccessfully removed &b%player% &afrom accessors of this crate!").replace("%player%",newAccessor.getName())));
+        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.success", "&aSuccessfully removed &b%player% &afrom accessors of this crate!").replace("%player%", newAccessor.getName())));
     }
 
     @Override

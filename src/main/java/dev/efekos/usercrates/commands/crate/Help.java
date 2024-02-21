@@ -37,7 +37,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Command(name = "help",description = "Help menu.")
+@Command(name = "help", description = "Help menu.")
 public class Help extends SubCommand {
     public Help(@NotNull String name) {
         super(name);
@@ -61,35 +61,35 @@ public class Help extends SubCommand {
     public void onPlayerUse(Player player, String[] strings) {
         Crate c = new Crate("crate");
         ArrayList<SubCommand> subCommands = new ArrayList<>();
-        for(Class<? extends SubCommand> sub:c.getSubs()){
+        for (Class<? extends SubCommand> sub : c.getSubs()) {
             try {
                 Constructor<? extends SubCommand> constructor = sub.getConstructor(String.class);
                 me.efekos.simpler.annotations.Command commandA = sub.getAnnotation(me.efekos.simpler.annotations.Command.class);
                 SubCommand command = constructor.newInstance(commandA.name());
                 subCommands.add(command);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        c.renderHelpList(player,subCommands);
+        c.renderHelpList(player, subCommands);
     }
 
     @Override
     public void onConsoleUse(ConsoleCommandSender sender, String[] strings) {
         Crate c = new Crate("crate");
         ArrayList<SubCommand> subCommands = new ArrayList<>();
-        for(Class<? extends SubCommand> sub:c.getSubs()){
+        for (Class<? extends SubCommand> sub : c.getSubs()) {
             try {
                 Constructor<? extends SubCommand> constructor = sub.getConstructor(String.class);
                 me.efekos.simpler.annotations.Command commandA = sub.getAnnotation(me.efekos.simpler.annotations.Command.class);
                 SubCommand command = constructor.newInstance(commandA.name());
                 subCommands.add(command);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        c.renderHelpList(sender,subCommands);
+        c.renderHelpList(sender, subCommands);
     }
 }
