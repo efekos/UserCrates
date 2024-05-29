@@ -54,6 +54,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -148,7 +149,8 @@ public class Utilities {
         lore.add(TranslateManager.translateColors(Main.LANG_CONFIG.getString("key.desc.3", "&6Right-Click to &e%player%'s Crate &6with this key to open it!").replace("%player%", ownerName)));
 
         meta.setLore(lore);
-        meta.addEnchant(new Utilities.Glow(), 1, true);
+        meta.addEnchant(Enchantment.MENDING, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(Main.CRATE_UUID, PersistentDataType.STRING, crate.getUniqueId().toString());
@@ -205,75 +207,6 @@ public class Utilities {
         data.set("crateOwnerUUID", crate.getOwner());
         MenuManager.updateMenuData(player, data);
         MenuManager.Open(player, CrateOpening.class);
-    }
-
-    public static class Glow extends Enchantment {
-
-        public void register() {
-            try {
-                Field f = Enchantment.class.getDeclaredField("acceptingNew");
-                f.setAccessible(true);
-                f.set(null, true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                Enchantment.registerEnchantment(this);
-            } catch (IllegalArgumentException ignored) {
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public Glow(@NotNull NamespacedKey key) {
-            super(key);
-        }
-
-        public Glow() {
-            super(new NamespacedKey(Main.getInstance(), "glow"));
-        }
-
-        @NotNull
-        @Override
-        public String getName() {
-            return "Glow";
-        }
-
-        @Override
-        public int getMaxLevel() {
-            return 1;
-        }
-
-        @Override
-        public int getStartLevel() {
-            return 0;
-        }
-
-        @NotNull
-        @Override
-        public EnchantmentTarget getItemTarget() {
-            return EnchantmentTarget.ALL;
-        }
-
-        @Override
-        public boolean isTreasure() {
-            return false;
-        }
-
-        @Override
-        public boolean isCursed() {
-            return false;
-        }
-
-        @Override
-        public boolean conflictsWith(@NotNull Enchantment other) {
-            return false;
-        }
-
-        @Override
-        public boolean canEnchantItem(@NotNull ItemStack item) {
-            return true;
-        }
     }
 
     public static BaseComponent[] makeComponentsForValue(String baseText, String searchText, BaseComponent replacement) {
