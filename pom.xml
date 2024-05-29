@@ -81,6 +81,15 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>efekosdev</id>
+            <url>https://efekos.dev/maven</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -93,12 +102,12 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <version>2.10</version>
         </dependency>
         <dependency>
             <groupId>com.github.efekos</groupId>
             <artifactId>Simpler</artifactId>
-            <version>1.6.5</version>
+            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -117,6 +126,11 @@
             <artifactId>GriefPrevention</artifactId>
             <version>16.18</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.efekos</groupId>
+            <artifactId>Arn</artifactId>
+            <version>0.3.1</version>
         </dependency>
     </dependencies>
 </project>
