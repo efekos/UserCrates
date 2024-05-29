@@ -12,34 +12,40 @@
   * [Support](#support)
 <!-- TOC -->
 # UserCrates
-This plugin makes every chest a potential crate by someone. Every player can make a crate and put items they want to it, then open their own crates!
+This plugin makes every chest a potential crate by someone. Every player can make a crate and put items they want to it,
+then open their own crates!
 
 ## About
 
-How it works? Simply you just look to a crate, write a couple commands, and done! Now anyone with a key can open that crate. Nothing else required!
+How it works? Simply you just look to a crate, write a couple commands, and done! Now anyone with a key can open that
+crate. Nothing else required!
 
 ## Special Notes
 
 ### For Server Owners
 
-If you want to enable economy features (such as paying money to a crate), you need to install Vault and an economy plugin that works with Vault to your server. It is not
-required though, plugin will automatically disable the economy-specific features when Vault is not correctly setup.
+If you want to enable economy features (such as paying money to a crate), you need to install Vault and an economy
+plugin that works with Vault to your server. It is not required though, plugin will automatically disable the
+economy-specific features when Vault is not correctly setup.
 
-Any chest protected by at least one of the plugins below will be unable to become a crate. If you want another plugin to be here, tell me on my [discord](https://discord.gg/8PPgcmYNf4).
+Any chest protected by at least one of the plugins below will be unable to become a crate. If you want another plugin
+here, create an issue about it on [issues](https://github.com/efekos/UserCrates/issues) tab.
 * WorldGuard
 * GriefPrevention
 
-All the permissions should be enabled to all users by default. If you wish to make some limitations, you need a permission manager plugin that allows you to disable a
-permission.
+All the permissions should be enabled to all users by default. If you wish to make some limitations, you need a
+permission manager plugin that allows you to disable a permission.
 
 ### For Developers
 
-If you want your protection plugins to work with crates. Send me a message to me on [discord](https://discord.gg/8PPgcmYNf4) including all the information below:
+If you want your protection plugins to work with crates, create an issue about it on
+[issues](https://github.com/efekos/UserCrates/issues) tab including all the information below:
 * Name and main page of your plugin (spigotmc,modrinth and bukkit pages are the ones I trust the most).
-* Installation of an API to your plugin (or your entire plugin source as dependency, your choice).
-* A `public static boolean method(Player p,Location loc)` that returns `true` if your plugin will allow `p` to make a crate at the block in `loc`. IN JAVA, I HATE KOTLIN.
+* Installation of an API to your plugin (or your entire plugin source as a dependency, your choice).
+* A `public static boolean method(Player p,Location loc)` that returns `true` if your plugin will allow `p` to make a crate at the block in `loc`.
 
-Unfortunately, there is no API for this plugin. Despite it would be useless at the moment, I can make one if enough requests for it approaches.
+Unfortunately, there is no API for this plugin. Despite it would be useless at the moment, I can make one if enough
+requests for it approaches.
 
 ## Commands
 
@@ -59,7 +65,8 @@ Unfortunately, there is no API for this plugin. Despite it would be useless at t
 
 ## Permissions
 
-> Command permissions are skipped due to you can find them on [Commands](#commands)
+> [!NOTE]
+> Command permissions are skipped, see [Commands](#commands)
 
 | Permission       | Description                                       |
 |------------------|---------------------------------------------------|
@@ -411,4 +418,6 @@ open:
 
 ## Support
 
-If you see any bugs at the plugin, have some ideas for it, or just want to talk with me, consider my [discord](https://discord.gg/8PPgcmYNf4) server! It is (probably the best and) the fastest way to reach me out.
+If you see any bugs at the plugin, have some ideas for it, or just want to talk with me, consider my [discord](https://discord.gg/8PPgcmYNf4)
+server! It is (probably the best and) the fastest way to reach me out. You can also create an issue on
+[issues](https://github.com/efekos/UserCrates/issues) tab.
