@@ -24,6 +24,11 @@
 
 package dev.efekos.usercrates.data;
 
+import dev.efekos.arn.annotation.Container;
+import dev.efekos.arn.annotation.CustomArgument;
+
+@CustomArgument("usercrates:crate_consume_type")
+@Container
 public enum CrateConsumeType {
     KEY, // The crate will get opened only using a key.
     PRICE, // The crate will get opened only paying a price
