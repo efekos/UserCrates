@@ -1,7 +1,7 @@
-# Messages of the commands /crate addaccessor and /crate removeaccessor
+# /crate accessor
 accessor:
 
-  # /crate addaccessor
+  # /crate accessor add
   add:
 
     # When there is no chest at where player is looking.
@@ -20,7 +20,7 @@ accessor:
     # %player% - Player whose added as an accessor.
     success: '&aSuccessfully added &b%player% &aas an accessor to this crate!'
 
-  # /crate removeaccessor
+  # /crate accessor remove
   remove:
 
     # When there is no chest at where player is looking.
@@ -33,7 +33,7 @@ accessor:
     not-owner: '&cThat crate is not yours.'
 
     # When the given name does not exist inside accessor list of that crate.
-    unexists: '&b%player% &cis not an accessor of this crate already.'
+    unexists: '&b%player% &cis not an accessor of this crate.'
 
     # When player successfully removes someone from accessor list
     # %player% - Player whose removed from accessors
