@@ -97,10 +97,10 @@ public class Utilities {
             crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 2, 0.5), crate.getLabel()).getUniqueId());
         }
 
-        TextDisplay display = (TextDisplay) world.spawnEntity(crate.getLocation().add(0.5, 1.7, 0.5), EntityType.TEXT_DISPLAY);
+        TextDisplay display = (TextDisplay) world.spawnEntity(crate.getLocation().add(0.5, 1.2, 0.5), EntityType.TEXT_DISPLAY);
         display.setAlignment(TextDisplay.TextAlignment.CENTER);
         display.setShadowed(true);
-        display.setBillboard(Display.Billboard.HORIZONTAL);
+        display.setBillboard(Display.Billboard.CENTER);
 
         ArrayList<String> texts = new ArrayList<>();
 
@@ -111,13 +111,13 @@ public class Utilities {
                 texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Key Required"));
                 break;
             case BOTH_PRICE_KEY:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Use Key &d/ &ePrice: &a%price%"));
+                texts.add(Main.LANG_CONFIG.getString("hologram.2kp", "&6Use Key &d/ &ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
                 break;
             case PRICE:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%"));
+                texts.add(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
                 break;
             case ONLY_ACCESSORS:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Accessor Only"));
+                texts.add(Main.LANG_CONFIG.getString("hologram.2a", "&6Accessor Only"));
                 break;
         }
 
@@ -127,7 +127,6 @@ public class Utilities {
         display.setText(TranslateManager.translateColors(String.join("\n",texts)));
 
         crate.addHologram(display.getUniqueId());
-        Main.CRATES.update(crate.getUniqueId(),crate);
     }
 
     public static ItemStack makeCrateKey(Crate crate, int amount) {
@@ -247,6 +246,7 @@ public class Utilities {
 
     private static boolean isAllowedGriefPrevention(Player player, Location location) {
         Plugin plugin = Main.getInstance().getServer().getPluginManager().getPlugin("GriefPrevention");
+        if(plugin==null)return true;
         if (!(plugin instanceof GriefPrevention)) return true;
 
         GriefPrevention griefPrevention = GriefPrevention.instance;
@@ -258,7 +258,7 @@ public class Utilities {
 
     private static boolean isAllowedWorldGuard(Player player, Location location) {
         Plugin plugin = Main.getInstance().getServer().getPluginManager().getPlugin("WorldGuard");
-
+        if(plugin==null)return true;
         if (!(plugin instanceof WorldGuardPlugin)) {
             return true;
         }
