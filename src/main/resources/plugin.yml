@@ -2,7 +2,7 @@ name: UserCrates
 version: '${project.version}'
 main: dev.efekos.usercrates.Main
 api-version: '1.20'
-depend:
+softdepend:
   - Vault
   - WorldGuard
   - GriefPrevention
