@@ -25,7 +25,9 @@
 package dev.efekos.usercrates;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.sun.jna.platform.win32.Winsvc;
 import dev.efekos.arn.annotation.Command;
 import dev.efekos.arn.annotation.CommandArgument;
 import dev.efekos.arn.annotation.Container;
@@ -48,7 +50,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.network.chat.IChatBaseComponent;
 
 import java.util.*;
@@ -58,31 +59,28 @@ import java.util.stream.Collectors;
 @Helper("crate.help")
 public class Commands {
 
-    public static final DynamicCommandExceptionType NO_CRATE_EXCEPTION = new DynamicCommandExceptionType((p)->IChatBaseComponent.b(TranslateManager.translateColors(Main.LANG_CONFIG.getString((String) p, "&cYou need to look at the crate that you want to add an accessor."))));
-    public static final DynamicCommandExceptionType NOT_CRATE_OWNER = new DynamicCommandExceptionType((p)->IChatBaseComponent.b(TranslateManager.translateColors(Main.LANG_CONFIG.getString((String) p, "&cThat crate is not yours."))));
-    public static final SimpleCommandExceptionType NLTC_EXCEPTION = new SimpleCommandExceptionType(IChatBaseComponent.b(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.not-crate", "&cYou are not looking at a crate."))));
-
-    public static final DynamicCommandExceptionType GENERIC_EXCEPTION = new DynamicCommandExceptionType((o)->IChatBaseComponent.b((String) o));
+    public static final DynamicCommandExceptionType GENERIC = new DynamicCommandExceptionType((o)->IChatBaseComponent.b(TranslateManager.translateColors((String) o)));
+    public static final Dynamic2CommandExceptionType S_GENERIC = new Dynamic2CommandExceptionType((o,o2)->IChatBaseComponent.b(TranslateManager.translateColors(Main.LANG_CONFIG.getString((String) o,(String) o2))));
 
     @Command(value = "crate.accessor.add", description = "Add an accessor to your crate.", permission = "usercrates.accessor.add")
     @BlockConsole @BlockCommandBlock
     public int addAccessor(Player player, @CommandArgument Player target) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) throw NO_CRATE_EXCEPTION.create("accessor.add.not-chest");
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("accessor.add.not-chest","&cYou need to look at the crate that you want to add an accessor.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw NLTC_EXCEPTION.create();
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("accessor.add.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw NOT_CRATE_OWNER.create("accessor.add.not-owner");
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("accessor.add.not-owner","&cThat crate is not yours.");
 
         UUID accessorId = target.getUniqueId();
 
-        if (crate.getAccessors().contains(accessorId)) throw GENERIC_EXCEPTION.create(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.exists", "&b%player% &cis already an accessor of this crate.").replace("%player%", target.getName())));
+        if (crate.getAccessors().contains(accessorId)) throw GENERIC.create(Main.LANG_CONFIG.getString("accessor.add.exists", "&b%player% &cis already an accessor of this crate.").replace("%player%", target.getName()));
 
         crate.addAccessor(accessorId);
         Main.CRATES.update(crate.getUniqueId(), crate);
@@ -95,58 +93,46 @@ public class Commands {
     public int removeAccessor(Player player, @CommandArgument Player target) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) throw NO_CRATE_EXCEPTION.create("accessor.add.not-chest");
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("accessor.remove.not-chest","&cYou need to look at the crate that you want to remove an accessor.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw NLTC_EXCEPTION.create();
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("accessor.remove.not-crate","&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw NOT_CRATE_OWNER.create("accessor.add.not-owner");
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("accessor.remove.not-owner","&cThat crate is not yours.");
 
         UUID accessorId = target.getUniqueId();
 
-        if (!crate.getAccessors().contains(accessorId)) throw GENERIC_EXCEPTION.create(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.add.exists", "&b%player% &cis already an accessor of this crate.").replace("%player%", target.getName())));
+        if (!crate.getAccessors().contains(accessorId)) throw GENERIC.create(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.unexists", "&b%player% &cis not an accessor of this crate.").replace("%player%", target.getName())));
 
         crate.setAccessors(crate.getAccessors().stream().filter(uuid -> !uuid.equals(accessorId)).collect(Collectors.toList()));
         Main.CRATES.update(crate.getUniqueId(), crate);
-        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.unexists", "&b%player% &cis not an accessor of this crate already.").replace("%player%", target.getName())));
+        player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("accessor.remove.done", "&aSuccessfully removed &b%player% &afrom accessors of this crate!").replace("%player%", target.getName())));
         return 0;
     }
 
     @Command(value = "crate.changetype", description = "Change the type of your crate", permission = "usercrates.changetype")
     @BlockConsole @BlockCommandBlock
-    public int changeCrateType(Player player, @CommandArgument CrateConsumeType type) {
+    public int changeCrateType(Player player, @CommandArgument CrateConsumeType type) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("changetype.not-chest", "&cYou need to look at the crate that you want to change type.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("changetype.not-chest", "&cYou need to look at the crate that you want to change type.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("changetype.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("changetype.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("changetype.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("changetype.not-owner", "&cThat crate is not yours.");
 
         // rest is cmd specific
 
-        if (type.doesRequireEconomy() && !Main.economyAvaliable()) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("changetype.no-econ", "&cYou can't make your crate for sale, because this server does not have an economy.")));
-            return 1;
-        }
+        if (type.doesRequireEconomy() && !Main.economyAvaliable()) throw S_GENERIC.create("changetype.no-econ", "&cYou can't make your crate for sale, because this server does not have an economy.");
 
         crate.setConsumeType(type);
         Utilities.refreshHolograms(crate, chest.getWorld());
@@ -158,24 +144,15 @@ public class Commands {
 
     @Command(value = "crate.create",description = "Create a crate.",permission = "usercrates.create")
     @BlockConsole @BlockCommandBlock
-    public int createCrate(Player player, @CommandArgument int amount, @CommandArgument String label) {
+    public int createCrate(Player player, @CommandArgument int amount, @CommandArgument String label) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("create.not-chest", "&cYou need look at a chest to make it a crate.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("create.not-chest", "&cYou need look at a chest to make it a crate.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("create.already-crate", "&cThere is already a crate there.")));
-            return 1;
-        }
+        if (chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("create.already-crate", "&cThere is already a crate there.");
 
-        if (!Utilities.isAllowed(player, targetBlock.getLocation())) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("create.cant-interact", "&cYou don't have access to interact with that chest.")));
-            return 1;
-        }
+        if (!Utilities.isAllowed(player, targetBlock.getLocation())) throw S_GENERIC.create("create.cant-interact", "&cYou don't have access to interact with that chest.");
 
         dev.efekos.usercrates.data.Crate data = new Crate(targetBlock.getLocation(), player.getUniqueId(), new ArrayList<>(), Main.economyAvaliable() ? CrateConsumeType.BOTH_PRICE_KEY : CrateConsumeType.KEY, label);
         World world = targetBlock.getWorld();
@@ -197,26 +174,17 @@ public class Commands {
 
     @Command(value = "crate.delete",description = "Delete a create.",permission = "usercrates.delete")
     @BlockConsole @BlockCommandBlock
-    public int deleteCreate(Player player) {
+    public int deleteCreate(Player player) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-chest", "&cYou need to look at the crate that you want to delete.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("delete.not-chest", "&cYou need to look at the crate that you want to delete.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("delete.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING));
         Crate crate = Main.CRATES.get(id);
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("delete.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("delete.not-owner", "&cThat crate is not yours.");
 
         player.getWorld().getEntities().stream().filter(entity -> crate.getHolograms().contains(entity.getUniqueId())).forEach(Entity::remove);
 
@@ -230,35 +198,23 @@ public class Commands {
 
     @Command(value = "crate.getkey",description = "Get a key for your crate.",permission = "usercrates.getkey")
     @BlockConsole @BlockCommandBlock
-    public int getKey(Player player,@CommandArgument int amount) {
+    public int getKey(Player player,@CommandArgument int amount) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("getkey.not-chest", "&cYou need to look at the crate that you want to get a key for.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("getkey.not-chest", "&cYou need to look at the crate that you want to get a key for.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("getkey.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("getkey.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("getkey.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("getkey.not-owner", "&cThat crate is not yours.");
 
         // rest is cmd specific
 
-        if (!Arrays.asList(CrateConsumeType.BOTH_PRICE_KEY, CrateConsumeType.KEY).contains(crate.getConsumeType())) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("getkey.not-keyable", "&cThis crate can't have a key. You need to buy the crate by opening it. If you wanted to make it able for keys, change its type using &b/crate changetype &cfirst.")));
-            return 1;
-        }
+        if (!Arrays.asList(CrateConsumeType.BOTH_PRICE_KEY, CrateConsumeType.KEY).contains(crate.getConsumeType())) throw S_GENERIC.create("getkey.not-keyable", "&cThis crate can't have a key. You need to buy the crate by opening it. If you wanted to make it able for keys, change its type using &b/crate changetype &cfirst.");
 
         ItemStack keyStack = Utilities.makeCrateKey(crate, amount);
 
@@ -269,29 +225,19 @@ public class Commands {
 
     @Command(value = "crate.manage",description = "Manage your crate.",permission = "usercrates.manage")
     @BlockConsole @BlockCommandBlock
-    public int manageCrate(Player player) {
+    public int manageCrate(Player player) throws CommandSyntaxException {
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("manage.not-chest", "&cYou need to look at the crate that you want to manage.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("manage.not-chest", "&cYou need to look at the crate that you want to manage.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("manage.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("manage.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("manage.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
-
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("manage.not-owner", "&cThat crate is not yours.");
 
         OfflinePlayer owner = Bukkit.getOfflinePlayer(crate.getOwner());
         List<String> accessorNames = new ArrayList<>();
@@ -300,7 +246,6 @@ public class Commands {
             OfflinePlayer p = Bukkit.getOfflinePlayer(accessor);
             accessorNames.add(p.getName());
         }
-
 
         player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("manage.header", "&4--&a%player%'s Crate&4--").replace("%player%", player.getName())));
         player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("manage.owner", "&eOwner: &b%player%").replace("%player%", Objects.requireNonNull(owner.getName()))));
@@ -328,28 +273,19 @@ public class Commands {
 
     @Command(value = "crate.setlabel",description = "Change label of your crate.", permission = "usercrates.setlabel")
     @BlockConsole @BlockCommandBlock
-    public int changeLabel(Player player,@CommandArgument String label) {
+    public int changeLabel(Player player,@CommandArgument String label) throws CommandSyntaxException{
         Block targetBlock = Utilities.getTargetBlock(player, 5);
 
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-chest", "&cYou need to look at the crate that you want to change the label.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("setlabel.not-chest", "&cYou need to look at the crate that you want to change the label.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("setlabel.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setlabel.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("setlabel.not-owner", "&cThat crate is not yours.");
 
         // rest is cmd specific
 
@@ -363,42 +299,23 @@ public class Commands {
 
     @Command(value = "crate.setprice",description = "Change price of your crate.",permission = "usercrates.setprice")
     @BlockConsole @BlockCommandBlock
-    public int changePrice(Player player,@CommandArgument int price) {
-        if (!Main.economyAvaliable()) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setprice.no-econ", "&cYou can't set a price for any crate, because this server does not have an economy.")));
-            return 1;
-        }
-
+    public int changePrice(Player player,@CommandArgument int price) throws CommandSyntaxException {
+        if (!Main.economyAvaliable()) throw S_GENERIC.create("setprice.no-econ", "&cYou can't set a price for any crate, because this server does not have an economy.");
 
         Block targetBlock = Utilities.getTargetBlock(player, 5);
-
-        if (targetBlock.getType() != Material.CHEST) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setprice.not-chest", "&cYou need to look at the crate that you want to change the price.")));
-            return 1;
-        }
+        if (targetBlock.getType() != Material.CHEST) throw S_GENERIC.create("setprice.not-chest", "&cYou need to look at the crate that you want to change the price.");
 
         Chest chest = (Chest) targetBlock.getState();
-        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setprice.not-crate", "&cYou are not looking at a crate.")));
-            return 1;
-        }
+        if (!chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) throw S_GENERIC.create("setprice.not-crate", "&cYou are not looking at a crate.");
 
         UUID id = UUID.fromString(Objects.requireNonNull(chest.getPersistentDataContainer().get(Main.CRATE_UUID, PersistentDataType.STRING)));
         dev.efekos.usercrates.data.Crate crate = Main.CRATES.get(id);
 
         assert crate != null;
-        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setprice.not-owner", "&cThat crate is not yours.")));
-            return 1;
-        }
+        if (!crate.getOwner().equals(player.getUniqueId()) && !player.hasPermission("usercrates.admin")) throw S_GENERIC.create("setprice.not-owner", "&cThat crate is not yours.");
 
         // rest is cmd specific
-
-        if (!Arrays.asList(CrateConsumeType.BOTH_PRICE_KEY, CrateConsumeType.PRICE).contains(crate.getConsumeType())) {
-            player.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("setprice.not-pricable", "&cThis crate can't have a price. You need to get a key using &b/crate getkey&c. If you wanted to make it for sale, change its type to a buyable type using &b/crate changetype &cfirst.")));
-            return 1;
-        }
-
+        if (!crate.getConsumeType().doesRequireEconomy()) throw S_GENERIC.create("setprice.not-pricable", "&cThis crate can't have a price. You need to get a key using &b/crate getkey&c. If you wanted to make it for sale, change its type to a buyable type using &b/crate changetype &cfirst.");
 
         crate.setPrice(price);
         Utilities.refreshHolograms(crate, chest.getWorld());
