@@ -58,7 +58,7 @@ public final class Main extends JavaPlugin {
         // random setup stuff
         CONFIG = new YamlConfig("config.yml", this);
         LANG_CONFIG = new YamlConfig("lang.yml", this);
-        CRATES = new ListDataManager<>("Crates.json", this);
+        CRATES = new ListDataManager<>("\\data\\Crates.json", this);
         CRATES.load();
         CONFIG.setup();
         LANG_CONFIG.setup();
