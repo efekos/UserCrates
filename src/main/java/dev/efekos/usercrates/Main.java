@@ -24,11 +24,11 @@
 
 package dev.efekos.usercrates;
 
+import dev.efekos.arn.Arn;
 import dev.efekos.usercrates.data.Crate;
 import dev.efekos.usercrates.events.BlockEvents;
 import dev.efekos.usercrates.events.EntityEvents;
 import dev.efekos.usercrates.events.InventoryEvents;
-import me.efekos.simpler.commands.CommandManager;
 import me.efekos.simpler.config.ListDataManager;
 import me.efekos.simpler.config.YamlConfig;
 import me.efekos.simpler.menu.MenuManager;
@@ -59,12 +59,11 @@ public final class Main extends JavaPlugin {
         CONFIG = new YamlConfig("config.yml", this);
         LANG_CONFIG = new YamlConfig("lang.yml", this);
         CRATES = new ListDataManager<>("Crates.json", this);
-        CRATES.load(Crate[].class);
+        CRATES.load();
         CONFIG.setup();
         LANG_CONFIG.setup();
         instance = this;
         CRATE_UUID = new NamespacedKey(getInstance(), "crate_uuid");
-        new Utilities.Glow().register();
         MenuManager.setPlugin(this);
 
         // setup events
@@ -73,11 +72,7 @@ public final class Main extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryEvents(), this);
 
         // setup commands
-        try {
-            CommandManager.registerCoreCommand(this, dev.efekos.usercrates.commands.Crate.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Arn.run(Main.class);
 
         //setup economy
         if (!setupEconomy()) {
@@ -90,9 +85,7 @@ public final class Main extends JavaPlugin {
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) return false;
         RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-        }
+        if (economyProvider != null) economy = economyProvider.getProvider();
 
         return economy != null;
     }
