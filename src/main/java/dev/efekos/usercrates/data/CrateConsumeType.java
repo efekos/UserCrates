@@ -30,8 +30,24 @@ import dev.efekos.arn.annotation.CustomArgument;
 @CustomArgument("usercrates:crate_consume_type")
 @Container
 public enum CrateConsumeType {
-    KEY, // The crate will get opened only using a key.
-    PRICE, // The crate will get opened only paying a price
-    BOTH_PRICE_KEY, // The crate will get opened with both keys and prices.
-    ONLY_ACCESSORS // Only the accessors can open the crate with no price/key. Intended for fun.
+    KEY(false,true), // The crate will get opened only using a key.
+    PRICE(true,false), // The crate will get opened only paying a price
+    BOTH_PRICE_KEY(true,true), // The crate will get opened with both keys and prices.
+    ONLY_ACCESSORS(false,false); // Only the accessors can open the crate with no price/key. Intended for fun.
+
+    private final boolean requireEconomy;
+    private final boolean keyable;
+
+    CrateConsumeType(boolean requireEconomy, boolean keyable) {
+        this.requireEconomy = requireEconomy;
+        this.keyable = keyable;
+    }
+
+    public boolean doesRequireEconomy() {
+        return requireEconomy;
+    }
+
+    public boolean isKeyable() {
+        return keyable;
+    }
 }
