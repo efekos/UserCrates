@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.8</version>
+            <version>7.0.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>dev.efekos</groupId>
             <artifactId>Arn</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.2</version>
         </dependency>
     </dependencies>
 </project>
