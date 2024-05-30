@@ -26,14 +26,15 @@ package dev.efekos.usercrates.menu;
 
 import dev.efekos.usercrates.Main;
 import dev.efekos.usercrates.Utilities;
-import me.efekos.simpler.items.ItemContent;
 import me.efekos.simpler.menu.Menu;
 import me.efekos.simpler.menu.MenuData;
 import me.efekos.simpler.menu.MenuManager;
 import me.efekos.simpler.translation.TranslateManager;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.ItemTag;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Item;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -196,7 +197,7 @@ public class CrateOpening extends Menu {
 
                 assert stackMeta != null;
                 BaseComponent component = stackMeta.hasDisplayName() ? new TextComponent(stackMeta.getDisplayName()) : TranslateManager.translateMaterial(stackToGive.getType());
-                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, ItemContent.from(stackToGive)));
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new Item(stackToGive.getType().getKey().toString(),stackToGive.getAmount(), ItemTag.ofNbt(stackMeta.getAsString()))));
 
                 owner.spigot().sendMessage(Utilities.makeComponentsForValue(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.done", "&aYou got &f[&f%item%&f] x%count% &afrom the crate!").replace("%count%", stackToGive.getAmount() + "")), "%item%", component));
 
