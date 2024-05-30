@@ -48,11 +48,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.enchantments.EnchantmentTarget;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -61,9 +57,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockIterator;
-import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class Utilities {
@@ -103,32 +97,37 @@ public class Utilities {
             crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 2, 0.5), crate.getLabel()).getUniqueId());
         }
 
-        switch (crate.getConsumeType()) {
+        TextDisplay display = (TextDisplay) world.spawnEntity(crate.getLocation().add(0.5, 1.7, 0.5), EntityType.TEXT_DISPLAY);
+        display.setAlignment(TextDisplay.TextAlignment.CENTER);
+        display.setShadowed(true);
+        display.setBillboard(Display.Billboard.HORIZONTAL);
+
+        ArrayList<String> texts = new ArrayList<>();
+
+        texts.add(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())));
+
+        switch (crate.getConsumeType()){
             case KEY:
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.7, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.4, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.2k", "&6Key Required"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.1, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 0.8, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.4", "&7Left-Click to See Items"))).getUniqueId());
-                break;
-            case PRICE:
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.7, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.4, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%").replace("%price%", Main.getEconomy().format(crate.getPrice())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.1, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 0.8, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.4", "&7Left-Click to See Items"))).getUniqueId());
+                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Key Required"));
                 break;
             case BOTH_PRICE_KEY:
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.7, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.4, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.2kp", "&6Use Key &d/ &ePrice: &a%price%").replace("%price%", Main.getEconomy().format(crate.getPrice())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.1, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 0.8, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.4", "&7Left-Click to See Items"))).getUniqueId());
+                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Use Key &d/ &ePrice: &a%price%"));
+                break;
+            case PRICE:
+                texts.add(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%"));
                 break;
             case ONLY_ACCESSORS:
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.7, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.4, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.2a", "&6Accessor Only"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 1.1, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"))).getUniqueId());
-                crate.addHologram(makeHologram(world, crate.getLocation().add(0.5, 0.8, 0.5), TranslateManager.translateColors(Main.LANG_CONFIG.getString("hologram.4", "&7Left-Click to See Items"))).getUniqueId());
+                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Accessor Only"));
                 break;
         }
+
+        texts.add(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"));
+        texts.add(Main.LANG_CONFIG.getString("hologram.4", "&7Left-Click to See Items"));
+
+        display.setText(TranslateManager.translateColors(String.join("\n",texts)));
+
+        crate.addHologram(display.getUniqueId());
+        Main.CRATES.update(crate.getUniqueId(),crate);
     }
 
     public static ItemStack makeCrateKey(Crate crate, int amount) {
