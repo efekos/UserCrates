@@ -87,14 +87,6 @@
             <name>Maven Central</name>
             <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
-        <repository>
-            <id>efekosdev</id>
-            <url>https://efekos.dev/maven</url>
-        </repository>
-        <repository>
-            <id>efekosdev-local</id>
-            <url>file://C:\EfekosDev\Maven</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -110,9 +102,9 @@
             <version>2.10</version>
         </dependency>
         <dependency>
-            <groupId>me.efekos</groupId>
+            <groupId>com.github.efekos</groupId>
             <artifactId>Simpler</artifactId>
-            <version>1.7.2</version>
+            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
