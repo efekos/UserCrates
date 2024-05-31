@@ -12,7 +12,7 @@
     <name>User Crates</name>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -91,6 +91,10 @@
             <id>efekosdev</id>
             <url>https://efekos.dev/maven</url>
         </repository>
+        <repository>
+            <id>efekosdev-local</id>
+            <url>file://C:\EfekosDev\Maven</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -106,9 +110,9 @@
             <version>2.10</version>
         </dependency>
         <dependency>
-            <groupId>com.github.efekos</groupId>
+            <groupId>me.efekos</groupId>
             <artifactId>Simpler</artifactId>
-            <version>1.7.1</version>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>

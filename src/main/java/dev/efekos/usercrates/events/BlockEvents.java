@@ -72,8 +72,7 @@ public class BlockEvents implements Listener {
     public void onBlockExplode(BlockExplodeEvent e) {
         BlockState state = e.getBlock().getState();
 
-        if (state instanceof Chest) {
-            Chest chest = (Chest) state;
+        if (state instanceof Chest chest) {
 
             if (chest.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING))
                 e.setCancelled(true);
@@ -122,7 +121,7 @@ public class BlockEvents implements Listener {
                 if (menuData.get("crateOwner") != null) return;
                 menuData = null;
                 switch (crate.getConsumeType()) { // checks based on type
-                    case ONLY_ACCESSORS:
+                    case ONLY_ACCESSORS -> {
                         //------------------------------------------------------------
                         if (!crate.getAccessors().contains(p.getUniqueId())) {
                             p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.not-accessor", "&cThis crate is accessor only, you can't open it.")));
@@ -130,87 +129,65 @@ public class BlockEvents implements Listener {
                         }
                         p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.opening", "&eOpening the crate...")));
                         Utilities.openCrate(p, crate, chest, false);
-                        break;
+                    }
                     //-------------------------------------------------------------------
-                    case PRICE:
-                        if (!Main.economyAvaliable()) {
-                            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-econ", "&cYou can't open this crate right now, because this server probably removed their economy system while this crate was still in &bOnly Price &ctype. Ask the crate's owner to change the type.")));
-                            return;
-                        }
-
-                        if (money < price) {  // means player does not have enough money
-                            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.neb", "&cYou need &a%price% &cto open this crate.").replace("%price%", Main.getEconomy().format(price + 0.0))));
-                            return;
-                        }
-
+                    case PRICE -> {
+                        if (priceCheck(p, money, price)) return;
                         Utilities.openCrate(p, crate, chest, true);
-                        break;
-                    //-------------------------------------------------------------
-                    case KEY:
-                        ItemStack stack = e.getItem();
-                        if (stack == null) {
-                            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-key", "&cYou need to hold a key for this crate.")));
-                            return;
-                        }
-                        ItemMeta meta = stack.getItemMeta();
-                        assert meta != null;
-                        PersistentDataContainer stackContainer = meta.getPersistentDataContainer();
-                        if (!stackContainer.has(Main.CRATE_UUID, PersistentDataType.STRING)) {
-                            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-key", "&cYou need to hold a key in your hand for this crate.")));
-                            return;
-                        }
-                        UUID keyId = UUID.fromString(Objects.requireNonNull(stackContainer.get(Main.CRATE_UUID, PersistentDataType.STRING)));
-                        if (!crate.getUniqueId().equals(keyId)) {
-
-                            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.invalid-key", "&cYou are not holding the correct key for this crate.")));
-                            return;
-                        }
-
-                        e.getItem().setAmount(stack.getAmount() - 1); // remove the key
-
+                    }
+                    case KEY -> {
+                        if (checkForKey(e, p, crate)) return;
                         p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.opening", "&eOpening the crate...")));
                         Utilities.openCrate(p, crate, chest, false);
-                        break;
-                    //----------------------------------------------------------
-                    case BOTH_PRICE_KEY:
+                    }
+                    case BOTH_PRICE_KEY -> {
                         if (e.getItem() != null && e.getItem().hasItemMeta() && Objects.requireNonNull(e.getItem().getItemMeta()).getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) { // means he has a key
-                            stack = e.getItem();
-                            if (stack == null) {
-                                p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-key", "&cYou need to hold a key for this crate.")));
-                                return;
-                            }
-                            meta = stack.getItemMeta();
-                            stackContainer = meta.getPersistentDataContainer();
-
-                            keyId = UUID.fromString(Objects.requireNonNull(stackContainer.get(Main.CRATE_UUID, PersistentDataType.STRING)));
-                            if (!crate.getUniqueId().equals(keyId)) {
-                                p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.invalid-key", "&cYou are not holding the correct key for this crate.")));
-                                return;
-                            }
-
-                            e.getItem().setAmount(stack.getAmount() - 1); // remove the key
-
+                            if(checkForKey(e, p , crate)) return;
                             p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.opening", "&eOpening the crate...")));
                             Utilities.openCrate(p, crate, chest, false);
                         } else { // means he probably wants to buy it
-                            if (!Main.economyAvaliable()) {
-                                p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-econ", "&cYou can't open this crate right now, because this server probably removed their economy system while this crate was still in &bOnly Price &ctype. Ask the crate's owner to change the type.")));
-                                return;
-                            }
-
-                            if (money < price) {  // means player does not have enough money
-                                p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.neb", "&cYou need &a%price% &cto open this crate.").replace("%price%", Main.getEconomy().format(price + 0.0))));
-                                return;
-                            }
-
+                            if (priceCheck(p, money, price)) return;
                             Utilities.openCrate(p, crate, chest, true);
                         }
-                        break;
+                    }
                 }
-                break;
-            default:
-                break;
         }
+    }
+
+    private static boolean priceCheck(Player p, double money, int price) {
+        if (!Main.economyAvaliable()) {
+            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-econ", "&cYou can't open this crate right now, because this server probably removed their economy system while this crate was still in &bOnly Price &ctype. Ask the crate's owner to change the type.")));
+            return true;
+        }
+
+        if (money < price) {  // means player does not have enough money
+            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.neb", "&cYou need &a%price% &cto open this crate.").replace("%price%", Main.getEconomy().format(price + 0.0))));
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean checkForKey(PlayerInteractEvent e, Player p, Crate crate) {
+        ItemStack stack = e.getItem();
+        if (stack == null) {
+            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-key", "&cYou need to hold a key for this crate.")));
+            return true;
+        }
+        ItemMeta meta = stack.getItemMeta();
+        assert meta != null;
+        PersistentDataContainer stackContainer = meta.getPersistentDataContainer();
+        if (!stackContainer.has(Main.CRATE_UUID, PersistentDataType.STRING)) {
+            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.no-key", "&cYou need to hold a key in your hand for this crate.")));
+            return true;
+        }
+        UUID keyId = UUID.fromString(Objects.requireNonNull(stackContainer.get(Main.CRATE_UUID, PersistentDataType.STRING)));
+        if (!crate.getUniqueId().equals(keyId)) {
+            p.sendMessage(TranslateManager.translateColors(Main.LANG_CONFIG.getString("open.invalid-key", "&cYou are not holding the correct key for this crate.")));
+            return true;
+        }
+
+        e.getItem().setAmount(stack.getAmount() - 1); // remove the key
+        return false;
     }
 
     // prevent placing chests right next to crates

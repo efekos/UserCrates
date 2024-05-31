@@ -51,7 +51,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class CrateOpening extends Menu {
     public CrateOpening(MenuData data) {
@@ -108,7 +107,7 @@ public class CrateOpening extends Menu {
         Inventory chestInventory = (Inventory) data.get("inventory");
         ItemStack stackToGive = (ItemStack) data.get("winningItem");
 
-        List<ItemStack> contents = Arrays.stream(chestInventory.getContents()).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ItemStack> contents = Arrays.stream(chestInventory.getContents()).filter(Objects::nonNull).toList();
 
         BukkitRunnable makeGreen = new BukkitRunnable() {
             @Override

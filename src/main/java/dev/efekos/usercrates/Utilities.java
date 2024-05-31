@@ -107,18 +107,10 @@ public class Utilities {
         texts.add(Main.LANG_CONFIG.getString("hologram.1", "&e%player%'s Crate").replace("%player%", Objects.requireNonNull(player.getName())));
 
         switch (crate.getConsumeType()){
-            case KEY:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Key Required"));
-                break;
-            case BOTH_PRICE_KEY:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2kp", "&6Use Key &d/ &ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
-                break;
-            case PRICE:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
-                break;
-            case ONLY_ACCESSORS:
-                texts.add(Main.LANG_CONFIG.getString("hologram.2a", "&6Accessor Only"));
-                break;
+            case KEY -> texts.add(Main.LANG_CONFIG.getString("hologram.2k", "&6Key Required"));
+            case BOTH_PRICE_KEY -> texts.add(Main.LANG_CONFIG.getString("hologram.2kp", "&6Use Key &d/ &ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
+            case PRICE -> texts.add(Main.LANG_CONFIG.getString("hologram.2", "&ePrice: &a%price%").replace("%price%",crate.getPrice()+""));
+            case ONLY_ACCESSORS -> texts.add(Main.LANG_CONFIG.getString("hologram.2a", "&6Accessor Only"));
         }
 
         texts.add(Main.LANG_CONFIG.getString("hologram.3", "&7Right-Click to Open"));

@@ -41,15 +41,13 @@ public class InventoryEvents implements Listener {
      */
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent e) {
-        if (e.getSource().getHolder() instanceof Chest && e.getDestination().getHolder() instanceof Hopper) {
-            Chest chest = (Chest) e.getSource().getHolder();
+        if (e.getSource().getHolder() instanceof Chest chest && e.getDestination().getHolder() instanceof Hopper) {
             PersistentDataContainer container = chest.getPersistentDataContainer();
 
             if (container.has(Main.CRATE_UUID, PersistentDataType.STRING)) e.setCancelled(true);
         }
 
-        if (e.getSource().getHolder() instanceof Hopper && e.getDestination().getHolder() instanceof Chest) {
-            Chest chest = (Chest) e.getDestination().getHolder();
+        if (e.getSource().getHolder() instanceof Hopper && e.getDestination().getHolder() instanceof Chest chest) {
             PersistentDataContainer container = chest.getPersistentDataContainer();
 
             if (container.has(Main.CRATE_UUID, PersistentDataType.STRING)) e.setCancelled(true);
