@@ -220,20 +220,21 @@ public class BlockEvents implements Listener {
         Location blockLoc = e.getBlock().getLocation();
 
 
-        Arrays.asList(
+        for (Location location : Arrays.asList(
                 blockLoc.clone().add(1, 0, 0),
                 blockLoc.clone().add(0, 1, 0),
                 blockLoc.clone().add(0, 0, 1),
                 blockLoc.clone().add(-1, 0, 0),
                 blockLoc.clone().add(0, -1, 0),
                 blockLoc.clone().add(0, 0, -1)
-        ).forEach(location -> {
+        )) {
             Block otherChest = location.getBlock();
             if (!otherChest.getType().equals(Material.CHEST)) return;
             Chest otherC = (Chest) otherChest.getState();
             if (otherC.getPersistentDataContainer().has(Main.CRATE_UUID, PersistentDataType.STRING)) {
                 e.setCancelled(true);
             }
-        });
+        }
+
     }
 }
